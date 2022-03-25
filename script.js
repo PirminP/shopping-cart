@@ -1,5 +1,9 @@
 // const { fetchProducts } = require('./helpers/fetchProducts');
 
+// const getSavedCartItems = require("./helpers/getSavedCartItems");
+
+// const saveCartItems = require("./helpers/saveCartItems");
+
 // const { fetchItem } = require("./helpers/fetchItem");
 
 function createProductImageElement(imageSource) {
@@ -35,6 +39,8 @@ function getSkuFromProductItem(item) {
 
 function cartItemClickListener(event) {
   event.target.remove();
+  const savedCart = document.querySelector('.cart').innerHTML;
+  saveCartItems(savedCart);
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -52,9 +58,15 @@ async function addtoShoppingCart(event) {
   const item = await fetchItem(getId);
   const { id: sku, title: name, price: salePrice } = item;
   createCartItemElement({ sku, name, salePrice });
+  saveCartItems(document.querySelector('.cart').innerHTML);
 }
 
 window.onload = async () => {
+  getSavedCartItems();
+  document.querySelectorAll('.cart__item').forEach((element) => {
+    element.addEventListener('click', cartItemClickListener);
+  });
+
   const products = await fetchProducts('computador');
   products.results.forEach((product) => {
     const { id: sku, title: name, thumbnail: image } = product;
