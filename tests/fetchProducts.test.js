@@ -21,7 +21,7 @@ describe('Test the function fetchProducts', () => {
     expect(fetch).toHaveBeenCalledWith(url);
   });
 
-  it('4) Verifies if calling FetchProducts with argument computador has the same data structure as object computadorSearch', async () => {
+  it('4) Verifies if calling FetchProducts with argument computador, return has the same data structure as object computadorSearch', async () => {
     expect.assertions(1);
     const result = await fetchProducts('computador');
     expect(result).toEqual(computadorSearch);
