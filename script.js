@@ -55,8 +55,8 @@ async function addtoShoppingCart(event) {
 }
 
 window.onload = async () => {
-  const products = await fetchProducts();
-  products.forEach((product) => {
+  const products = await fetchProducts('computador');
+  products.results.forEach((product) => {
     const { id: sku, title: name, thumbnail: image } = product;
     createProductItemElement({ sku, name, image });
   });
