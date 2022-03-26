@@ -2,6 +2,8 @@
 
 // const getSavedCartItems = require("./helpers/getSavedCartItems");
 
+// const getSavedCartItems = require("./helpers/getSavedCartItems");
+
 // const saveCartItems = require("./helpers/saveCartItems");
 
 // const { fetchItem } = require("./helpers/fetchItem");
@@ -75,20 +77,45 @@ async function addtoShoppingCart(event) {
   // totalAmount.innerText = Number(totalAmount.innerText) + salePrice;
 }
 
-window.onload = async () => {
-  getSavedCartItems();
+// window.onload = async () => {
+//   getSavedCartItems();
+//   document.querySelectorAll('.cart__item').forEach((element) => {
+//     element.addEventListener('click', cartItemClickListener);
+//   });
+
+//   const products = await fetchProducts('computador');
+//   products.results.forEach((product) => {
+//     const { id: sku, title: name, thumbnail: image } = product;
+//     createProductItemElement({ sku, name, image });
+//   });
+
+//   const buttons = document.querySelectorAll('.item__add');
+//   buttons.forEach((button) => button.addEventListener('click', addtoShoppingCart));
+  
+//   document.querySelector('.empty-cart').addEventListener('click', emptyShoppingCart);
+//  };
+
+function localStorageLoad() {
+  const dataStorage = getSavedCartItems('cartItems');
+  if (dataStorage === null || dataStorage === undefined) {
+    return console.log('Local data storage empty!');
+  }
+  document.querySelector('cart').innerHTML = JSON.parse(dataStorage);
   document.querySelectorAll('.cart__item').forEach((element) => {
     element.addEventListener('click', cartItemClickListener);
   });
+}
 
+window.onload = async () => {
+  localStorageLoad();
   const products = await fetchProducts('computador');
   products.results.forEach((product) => {
     const { id: sku, title: name, thumbnail: image } = product;
     createProductItemElement({ sku, name, image });
   });
-
+  
   const buttons = document.querySelectorAll('.item__add');
   buttons.forEach((button) => button.addEventListener('click', addtoShoppingCart));
-  
+    
   document.querySelector('.empty-cart').addEventListener('click', emptyShoppingCart);
- };
+  };
