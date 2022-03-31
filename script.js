@@ -16,7 +16,6 @@ function createProductImageElement(imageSource) {
   img.src = imageSource;
   return img;
 }
-
 function createCustomElement(element, className, innerText) {
   const e = document.createElement(element);
   e.className = className;
@@ -27,31 +26,27 @@ function createCustomElement(element, className, innerText) {
 function createProductItemElement({ sku, name, image }) {
   const section = document.createElement('section');
   section.className = 'item';
-
   section.appendChild(createCustomElement('span', 'item__sku', sku));
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
-
   const sectionItems = document.querySelector('.items');
   sectionItems.appendChild(section);
 }
 
-function getSkuFromProductItem(item) {
-  return item.querySelector('span.item__sku').innerText;
+function getSkuFromProductItem(productItem) {
+  return productItem.querySelector('span.item__sku').innerText;
 }
 
 function cartItemClickListener(event) {
+  const productItemText = event.target.innerText;
+  const priceSearch = productItemText.search('PRICE: ') + 8;
+  const price = productItemText.substr(priceSearch, productItemText.length - priceSearch);
   event.target.remove();
-  const savedCart = document.querySelector('.cart').innerHTML;
-  saveCartItems(savedCart);
-
-  // const productItemText = event.target.innerText;
-  // const priceSearch = productItemText.search('PRICE: ');
-  // const price = productItem.substr(priceSearch, productItem.length - priceSearch);
-  // const totalAmount = document.querySelector('.total-price');
-  // totalAmount.innerText = Number(totalAmount.innerText) - Number(price);
-}
+  const totalAmount = document.querySelector('.total-price');
+  totalAmount.innerText = Number(totalAmount.innerText) - Number(price);
+  saveCartItems(document.querySelector('.cart').innerHTML);
+  }
 
 function emptyShoppingCart() {
   document.querySelectorAll('.cart__item').forEach((li) => li.remove());
@@ -79,37 +74,31 @@ function loadingApiEnd() {
   document.querySelector('.loading').remove();
 }
 
-async function addtoShoppingCart(event) {
+async function addToShoppingCart(event) {
   const getId = getSkuFromProductItem(event.target.parentElement);
   loadingApiStart();
   const item = await fetchItem(getId);
   loadingApiEnd();
   const { id: sku, title: name, price: salePrice } = item;
   createCartItemElement({ sku, name, salePrice });
+  const totalAmount = document.querySelector('#cart-total');
+  totalAmount.innerText = Number(totalAmount.innerText) + salePrice;
   saveCartItems(document.querySelector('.cart').innerHTML);
-
-  // const totalAmount = document.querySelector('#cart-total');
-  // totalAmount.innerText = Number(totalAmount.innerText) + salePrice;
 }
 
-function localStorageLoad() {
-  const dataStorage = getSavedCartItems('cartItems');
-  if (dataStorage === null || dataStorage === undefined) {
-    return console.log('Local data storage empty!');
-  }
-  document.querySelector('cart').innerHTML = JSON.parse(dataStorage);
-    document.querySelectorAll('.cart__item').forEach((element) => {
+function loadStorageLocal() {
+  const storageData = getSavedCartItems('cartItems');
+  if (storageData === null || storageData === undefined) {
+     return console.log('empty local storage');
+  } 
+  document.querySelector('.cart').innerHTML = JSON.parse(storageData);
+  document.querySelectorAll('.cart__item').forEach((element) => {
     element.addEventListener('click', cartItemClickListener);
   });
-  saveCartItems(document.querySelector('.cart').innerHTML);
 }
 
 window.onload = async () => {
-  localStorageLoad();
-  // getSavedCartItems('cartItems');
-  // document.querySelectorAll('.cart__item').forEach((element) => {
-  //   element.addEventListener('click', cartItemClickListener);
-  // });
+  loadStorageLocal();
   loadingApiStart();
   const products = await fetchProducts('computador');
   loadingApiEnd();
@@ -119,7 +108,7 @@ window.onload = async () => {
   });
 
   const buttons = document.querySelectorAll('.item__add');
-  buttons.forEach((button) => button.addEventListener('click', addtoShoppingCart));
+  buttons.forEach((button) => button.addEventListener('click', addToShoppingCart));
   
   document.querySelector('.empty-cart').addEventListener('click', emptyShoppingCart);
  };
