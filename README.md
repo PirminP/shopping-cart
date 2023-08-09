@@ -13,3 +13,5 @@ On this web application it is possbile to do the following:\
 
 ## Demonstration
 Access: [Click here](https://shopping-cart-pirminp.vercel.app/)
+
+![To access](https://github.com/PirminP/shopping-cart/blob/main/shopping-cart.gif)
